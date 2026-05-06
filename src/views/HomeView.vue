@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import CreateWorkout  from "@/components/createWorkout.vue";
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <create-workout/>
   </main>
 </template>
