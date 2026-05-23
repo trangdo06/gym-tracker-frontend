@@ -21,8 +21,8 @@ function save() {
   })
 
   nameField.value = ''
-  repsField.value = null
-  setField.value = null
+  repsField.value = 0
+  setField.value = 0
 }
 </script>
 
@@ -33,8 +33,8 @@ function save() {
   </h3>
   <div>
     <input v-model="nameField" placeholder="name of your exercise" type="text">
-    <input v-model="repsField" placeholder="reps" type="number">
-    <input v-model="setField" placeholder="sets"  type="number" @keyup.enter="save()">
+    <input v-model.number="repsField" placeholder="reps" type="number">
+    <input v-model.number="setField" placeholder="sets"  type="number" @keyup.enter="save()">
     <button @click="save()">Save</button>
   </div>
   <div v-for="workout in workouts" :key="workout.name">
