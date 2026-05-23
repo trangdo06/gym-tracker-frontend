@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import {ref} from 'vue'
+type Workout = {
+  name: string
+  reps: number
+  sets: number
+}
 
 const workouts = ref([])
 const workoutNameField = ref('')
