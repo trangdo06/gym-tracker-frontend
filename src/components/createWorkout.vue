@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {ref} from 'vue'
+
 type Workout = {
   workoutName: string
   name: string
@@ -23,7 +24,24 @@ function save() {
   nameField.value = ''
   repsField.value = 0
   setField.value = 0
+
 }
+
+function loadWorkout() {
+  const endpoint = 'http://localhost:8080/exercise'
+
+  fetch(endpoint)
+      .then(res => res.json())
+      .then(data => {
+        workouts.value = data
+      })
+
+}
+
+onMounted(() => {
+  loadWorkout()
+
+})
 </script>
 
 <template>
@@ -34,7 +52,7 @@ function save() {
   <div>
     <input v-model="nameField" placeholder="name of your exercise" type="text">
     <input v-model.number="repsField" placeholder="reps" type="number">
-    <input v-model.number="setField" placeholder="sets"  type="number" @keyup.enter="save()">
+    <input v-model.number="setField" placeholder="sets" type="number" @keyup.enter="save()">
     <button @click="save()">Save</button>
   </div>
   <div v-for="workout in workouts" :key="workout.name">
