@@ -15,8 +15,8 @@ const setField = ref(0)
 function save() {
   workouts.value.push({
     name: nameField.value,
-    reps: repsField.value,
-    sets: setField.value
+    reps: Number(repsField.value),
+    sets: Number(setField.value)
   })
 }
 </script>
