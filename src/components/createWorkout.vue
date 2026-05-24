@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import {ref, onMounted} from 'vue'
 
 type Workout = {
   workoutName: string
@@ -28,15 +28,20 @@ function save() {
 }
 
 function loadWorkout() {
-  const endpoint = 'http://localhost:8080/exercise'
+  const endpoint = import.meta.env.VITE_API_URL + '/exercise'
+  const requestOptions = {
+    method: 'GET',
+    redirect: 'follow'
+  }
 
-  fetch(endpoint)
+  fetch(endpoint, requestOptions)
       .then(res => res.json())
       .then(data => {
         workouts.value = data
       })
-
+      .catch(error => console.log(error))
 }
+
 
 onMounted(() => {
   loadWorkout()
