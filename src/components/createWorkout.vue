@@ -28,7 +28,7 @@
   }
 
   function loadWorkout() {
-    const endpoint = import.meta.env.VITE_BACKEND_BASE_URL + '/exercises'
+    const endpoint = import.meta.env.VITE_BACKEND_BASE_URL + '/workout'
     const requestOptions = {
       method: 'GET'
     }
