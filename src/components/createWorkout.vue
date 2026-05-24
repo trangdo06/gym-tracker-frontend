@@ -30,8 +30,7 @@ function save() {
 function loadWorkout() {
   const endpoint = import.meta.env.VITE_API_URL + '/exercise'
   const requestOptions = {
-    method: 'GET',
-    redirect: 'follow'
+    method: 'GET'
   }
 
   fetch(endpoint, requestOptions)
