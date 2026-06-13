@@ -2,6 +2,7 @@
 import {ref, onMounted} from 'vue'
 
 type Workout = {
+  id:number
   workoutName: string
   name: string
   reps: number
@@ -82,6 +83,7 @@ onMounted(() => {
     <button @click="save()">Save</button>
   </div>
   <div v-for="workout in workouts" :key="workout.id">
+    <h3>{{workout.id}}</h3>
     <h3>{{ workout.workoutName }}</h3>
     <h3>{{ workout.name }}</h3>
     <p>{{ workout.reps }} reps</p>
