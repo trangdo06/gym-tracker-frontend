@@ -32,7 +32,7 @@ async function loadWorkout() {
 
 async function save() {
   const endpoint = import.meta.env.VITE_BACKEND_BASE_URL + '/workout'
-  const data: Workout = {
+  const data: Workout =Omit<Workout, 'id'> =  {
     workoutName: workoutNameField.value,
     name: nameField.value,
     reps: Number(repsField.value),
