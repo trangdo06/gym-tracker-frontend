@@ -32,25 +32,37 @@ async function loadWorkout() {
 async function save() {
   const endpoint = import.meta.env.VITE_BACKEND_BASE_URL + '/workout'
   const data: Workout = {
-    workoutName: this.workoutNameField,
-    reps: this.repsField,
-    sets: this.setField
+    workoutName: workoutNameField.value,
+    name: nameField.value,
+    reps: Number(repsField.value),
+    sets: Number(setField.value)
   }
-  const requestOptions = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  }
-  fetch(endpoint, requestOptions)
-      .then(res => res.json())
-      .then(data => {
-        console.log('Success:', data)
-      })
-      .catch(error => console.error('Error:', error))
-}
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
 
+    if (!response.ok) {
+      throw new Error('Failed to save workout')
+    }
+
+    const savedWorkout = await response.json()
+
+    workouts.value.push(savedWorkout)
+
+    workoutNameField.value = ''
+    nameField.value = ''
+    repsField.value = 0
+    setField.value = 0
+
+  } catch (error) {
+    console.error('Error:', error)
+  }
+}
 
 
 onMounted(() => {
@@ -69,7 +81,7 @@ onMounted(() => {
     <input v-model.number="setField" placeholder="sets" type="number" @keyup.enter="save()">
     <button @click="save()">Save</button>
   </div>
-  <div v-for="workout in workouts" :key="workout.name">
+  <div v-for="workout in workouts" :key="workout.id">
     <h3>{{ workout.workoutName }}</h3>
     <h3>{{ workout.name }}</h3>
     <p>{{ workout.reps }} reps</p>
