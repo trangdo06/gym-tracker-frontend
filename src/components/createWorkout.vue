@@ -1,7 +1,21 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useAuth0 } from '@auth0/auth0-vue'
 
 const BASE = import.meta.env.VITE_BACKEND_BASE_URL
+const { getAccessTokenSilently } = useAuth0()
+
+async function authFetch(url: string, options: RequestInit = {}) {
+  const token = await getAccessTokenSilently()
+  return fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...options.headers,
+    },
+  })
+}
 
 const workouts = ref<any[]>([])
 const activeWorkout = ref<any>(null)
@@ -14,19 +28,18 @@ const selectedExercise = ref<any>(null)
 const sets = ref(3)
 const reps = ref(10)
 
-const muscleGroups = ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'quadriceps', 'hamstrings', 'glutes', 'calves', 'abdominals']
+const muscleGroups = ['chest', 'lats', 'middle_back', 'lower_back', 'traps', 'shoulders', 'biceps', 'triceps', 'quadriceps', 'hamstrings', 'glutes', 'calves', 'abdominals']
 const difficultyColor: Record<string, string> = { beginner: '#4caf50', intermediate: '#ff9800', expert: '#f44336' }
 
 async function loadWorkouts() {
-  const res = await fetch(BASE + '/workout')
+  const res = await authFetch(BASE + '/workout')
   workouts.value = await res.json()
 }
 
 async function createWorkout() {
   if (!newWorkoutName.value.trim()) return
-  const res = await fetch(BASE + '/workout', {
+  const res = await authFetch(BASE + '/workout', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ workoutName: newWorkoutName.value.trim() })
   })
   const workout = await res.json()
@@ -38,7 +51,7 @@ async function createWorkout() {
 async function searchByMuscle(muscle: string) {
   searchQuery.value = muscle
   nameQuery.value = ''
-  const res = await fetch(`${BASE}/exercises/search?muscle=${encodeURIComponent(muscle)}`)
+  const res = await authFetch(`${BASE}/exercises/search?muscle=${encodeURIComponent(muscle)}`)
   searchResults.value = await res.json()
   selectedExercise.value = null
 }
@@ -47,16 +60,15 @@ async function searchByName() {
   const name = nameQuery.value.trim()
   if (!name) return
   searchQuery.value = ''
-  const res = await fetch(`${BASE}/exercises/search?name=${encodeURIComponent(name)}`)
+  const res = await authFetch(`${BASE}/exercises/search?name=${encodeURIComponent(name)}`)
   searchResults.value = await res.json()
   selectedExercise.value = null
 }
 
 async function addExercise() {
   if (!activeWorkout.value || !selectedExercise.value) return
-  const res = await fetch(`${BASE}/workout/${activeWorkout.value.id}/exercises`, {
+  const res = await authFetch(`${BASE}/workout/${activeWorkout.value.id}/exercises`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       exerciseName: selectedExercise.value.name,
       muscle: selectedExercise.value.muscle,

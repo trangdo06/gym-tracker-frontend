@@ -13,6 +13,7 @@ createApp(App)
     clientId: config.clientId,
     authorizationParams: {
       redirect_uri: window.location.origin,
+      audience: config.audience,
     },
   }))
   .mount('#app')
