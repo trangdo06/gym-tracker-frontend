@@ -8,6 +8,7 @@ const activeWorkout = ref<any>(null)
 const newWorkoutName = ref('')
 
 const searchQuery = ref('')
+const nameQuery = ref('')
 const searchResults = ref<any[]>([])
 const selectedExercise = ref<any>(null)
 const sets = ref(3)
@@ -34,11 +35,19 @@ async function createWorkout() {
   newWorkoutName.value = ''
 }
 
-async function searchExercises(muscle?: string) {
-  const query = muscle ?? searchQuery.value.trim()
-  if (!query) return
-  if (muscle) searchQuery.value = muscle
-  const res = await fetch(`${BASE}/exercises/search?muscle=${encodeURIComponent(query)}`)
+async function searchByMuscle(muscle: string) {
+  searchQuery.value = muscle
+  nameQuery.value = ''
+  const res = await fetch(`${BASE}/exercises/search?muscle=${encodeURIComponent(muscle)}`)
+  searchResults.value = await res.json()
+  selectedExercise.value = null
+}
+
+async function searchByName() {
+  const name = nameQuery.value.trim()
+  if (!name) return
+  searchQuery.value = ''
+  const res = await fetch(`${BASE}/exercises/search?name=${encodeURIComponent(name)}`)
   searchResults.value = await res.json()
   selectedExercise.value = null
 }
@@ -129,13 +138,17 @@ onMounted(loadWorkouts)
       <!-- Muskelgruppen-Chips -->
       <div class="search-box">
         <p class="search-label">Übung suchen</p>
+        <div class="row">
+          <input v-model="nameQuery" class="input" placeholder="Name eingeben..." @keyup.enter="searchByName" />
+          <button class="btn-primary" @click="searchByName">Suchen</button>
+        </div>
         <div class="muscle-chips">
           <button
             v-for="m in muscleGroups"
             :key="m"
             class="chip"
             :class="{ 'chip--active': searchQuery === m }"
-            @click="searchExercises(m)"
+            @click="searchByMuscle(m)"
           >{{ m }}</button>
         </div>
 
